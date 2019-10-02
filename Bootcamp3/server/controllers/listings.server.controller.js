@@ -58,11 +58,35 @@ exports.update = function(req, res) {
   var listing = req.listing;
 
   /* Replace the listings's properties with the new properties found in req.body */
- 
-  /*save the coordinates (located in req.results if there is an address property) */
- 
-  /* Save the listing */
+  Listing.findByIdAndUpdate(listing.id, 
+    { code: req.body.code,
+      name: req.body.name,
+      address: req.body.address },
+     {new: true},
+     function (err, listing) {
+    //404 error
+    if (err)
+      res.status(404).send(err);
 
+  /*save the coordinates (located in req.results if there is an address property) */
+  if(req.results) {
+    listing.coordinates = {
+      latitude: req.results.lat, 
+      longitude: req.results.lng
+    };
+  }
+
+    /* Save the listing */
+    listing.save(function(err) {
+      if(err) {
+        console.log(err);
+        res.status(400).send(err);
+      }   else {
+        res.json(listing);
+        console.log(listing)
+      }
+    })
+  })
 };
 
 /* Delete a listing */
@@ -70,12 +94,25 @@ exports.delete = function(req, res) {
   var listing = req.listing;
 
   /* Add your code to remove the listins */
-
+  Listing.findByIdAndDelete(listing.id, function(err, listing) {
+    //404 error
+    if (err)
+      res.status(404).send(err);
+    //if deleted, send msg
+    res.send({messege: "deleted that juicy content"});
+  })
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
   /* Add your code */
+  Listing.find({}, null, {sort: {code: 1}}, function(err, AllListings) {
+    //404 error
+    if (err)
+      res.status(404).send(err);
+    //send all listings if no err
+    res.send(AllListings);
+  })
 };
 
 /* 
