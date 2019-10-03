@@ -66,7 +66,9 @@ exports.update = function(req, res) {
      function (err, listing) {
     //404 error
     if (err)
+    {
       res.status(404).send(err);
+    }
 
   /*save the coordinates (located in req.results if there is an address property) */
   if(req.results) {
@@ -97,7 +99,9 @@ exports.delete = function(req, res) {
   Listing.findByIdAndDelete(listing.id, function(err, listing) {
     //404 error
     if (err)
+    {
       res.status(404).send(err);
+    }
     //if deleted, send msg
     res.send({messege: "deleted that juicy content"});
   })
@@ -109,7 +113,9 @@ exports.list = function(req, res) {
   Listing.find({}, null, {sort: {code: 1}}, function(err, AllListings) {
     //404 error
     if (err)
+    {
       res.status(404).send(err);
+    }
     //send all listings if no err
     res.send(AllListings);
   })
